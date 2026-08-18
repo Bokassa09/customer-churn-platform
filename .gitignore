@@ -160,3 +160,6 @@ venv.bak/
 
 # mlflow local runs
 mlruns/*
+
+catboost_info/
+model.pkl
