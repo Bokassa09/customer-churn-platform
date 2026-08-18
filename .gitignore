@@ -162,4 +162,3 @@ venv.bak/
 mlruns/*
 
 catboost_info/
-model.pkl
