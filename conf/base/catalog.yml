@@ -1,0 +1,16 @@
+# Here you can define all your datasets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
+
+raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/Churn_Modelling.csv
+
+model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/model.pkl
+
+shap_df:
+  type: pandas.ParquetDataset
+  filepath: data/07_model_output/shap_values.parquet

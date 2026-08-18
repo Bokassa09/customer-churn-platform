@@ -1,0 +1,22 @@
+artifact_path: /home/bokassa/Projet_Churn/customer-churn-platform/notebooks/mlruns/1/models/m-2fae444b051843d4969f4c8f41388eaa/artifacts
+flavors:
+  catboost:
+    catboost_version: 1.2.10
+    code: null
+    data: model.cb
+    model_type: CatBoostClassifier
+    save_format: cbm
+  python_function:
+    data: model.cb
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.catboost
+    python_version: 3.10.12
+mlflow_version: 3.14.0
+model_id: m-2fae444b051843d4969f4c8f41388eaa
+model_size_bytes: 1114576
+model_uuid: m-2fae444b051843d4969f4c8f41388eaa
+prompts: null
+run_id: 6f2dfbcf5c964e7b92e3f6999f0128ea
+utc_time_created: '2026-08-16 23:57:13.293256'
