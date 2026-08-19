@@ -14,7 +14,9 @@ from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
-groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+api_key = os.getenv("GROQ_API_KEY")
+groq_client = Groq(api_key=api_key) if api_key else None
 
 
 feature_names = ['CreditScore', 'Geography', 'Gender', 'Age', 
@@ -164,8 +166,9 @@ def explain(data: ClientData):
     }
 
 
-@app.post("/analyze")
 def analyze(data: ClientData):
+    if groq_client is None:
+        return {"analyse_llm": "Service LLM non disponible"}
 
     # Prédiction
     X = pd.DataFrame([{
