@@ -47,18 +47,83 @@ STYLE_LABEL = {
 app.layout = html.Div([
 
     # Header
+html.Div([
+    html.H1("🏦 Customer Churn Intelligence Platform",
+            style={"color": "white", "margin": "0",
+                   "fontSize": "28px"}),
+    html.P("Détectez et expliquez le risque de départ de vos clients bancaires",
+           style={"color": "rgba(255,255,255,0.8)",
+                  "margin": "5px 0 5px 0", "fontSize": "14px"}),
+    html.P("CatBoost · MLflow · Kedro · SHAP · Groq · Dash",
+           style={"color": "rgba(255,255,255,0.5)",
+                  "margin": "0", "fontSize": "12px",
+                  "letterSpacing": "2px"}),
+                  html.Span("✅ Modèle en production sur Render",
+          style={"color": "#2ecc71",
+                 "fontSize": "11px",
+                 "marginTop": "5px",
+                 "display": "block"})
+], style={
+    "backgroundColor": COLORS["primary"],
+    "padding": "25px 40px",
+    "marginBottom": "20px"
+}),
+
+# KPIs statiques
+html.Div([
     html.Div([
-        html.H1("🏦 Customer Churn Intelligence Platform",
-                style={"color": "white", "margin": "0",
-                       "fontSize": "28px"}),
-        html.P("Détectez et expliquez le risque de départ de vos clients bancaires",
-               style={"color": "rgba(255,255,255,0.8)",
-                      "margin": "5px 0 0 0", "fontSize": "14px"})
-    ], style={
-        "backgroundColor": COLORS["primary"],
-        "padding": "25px 40px",
-        "marginBottom": "30px"
-    }),
+        html.H4("87.5%", style={"color": COLORS["secondary"],
+                                 "margin": "0", "fontSize": "24px"}),
+        html.P("ROC-AUC", style={"color": COLORS["text"],
+                                  "margin": "0", "fontSize": "12px"})
+    ], style={"textAlign": "center", "flex": "1"}),
+
+    html.Div([
+        html.H4("69.0%", style={"color": COLORS["secondary"],
+                                 "margin": "0", "fontSize": "24px"}),
+        html.P("Recall", style={"color": COLORS["text"],
+                                 "margin": "0", "fontSize": "12px"})
+    ], style={"textAlign": "center", "flex": "1"}),
+
+    html.Div([
+        html.H4("61.0%", style={"color": COLORS["secondary"],
+                                 "margin": "0", "fontSize": "24px"}),
+        html.P("F1 Score", style={"color": COLORS["text"],
+                                   "margin": "0", "fontSize": "12px"})
+    ], style={"textAlign": "center", "flex": "1"}),
+
+    html.Div([
+        html.H4("10 000", style={"color": COLORS["secondary"],
+                                  "margin": "0", "fontSize": "24px"}),
+        html.P("Clients dans le dataset", style={"color": COLORS["text"],
+                                           "margin": "0", "fontSize": "12px"})
+    ], style={"textAlign": "center", "flex": "1"}),
+
+], style={
+    "display": "flex",
+    "backgroundColor": "white",
+    "padding": "15px 40px",
+    "marginBottom": "20px",
+    "boxShadow": "0 2px 5px rgba(0,0,0,0.05)"
+}),
+
+html.Div([
+    html.P("🏦 Problématique métier",
+           style={"fontWeight": "bold", "color": COLORS["primary"],
+                  "marginBottom": "5px", "fontSize": "13px"}),
+    html.P("Une banque constate que des clients ferment leur compte chaque mois. "
+           "Acquérir un nouveau client coûte 5 à 7 fois plus cher que d'en retenir un. "
+           "Elle veut donc identifier à l'avance les clients à risque de départ (churn) "
+           "pour cibler ses actions de rétention.",
+           style={"color": COLORS["text"], "fontSize": "13px",
+                  "fontStyle": "italic", "margin": "0"})
+], style={
+    "backgroundColor": "#eaf4fb",
+    "padding": "15px 40px",
+    "marginBottom": "20px",
+    "borderLeft": f"4px solid {COLORS['secondary']}"
+}),
+
 
     # Contenu principal
     html.Div([
@@ -158,6 +223,12 @@ app.layout = html.Div([
 
             ], style={"display": "flex",
                       "justifyContent": "space-between"}),
+
+        html.P("🔍 Les explications SHAP sont générées en temps réel pour chaque client analysé.",
+       style={"color": "#999",
+              "fontSize": "12px",
+              "fontStyle": "italic",
+              "marginTop": "10px"}),
 
             # Bouton
             html.Button("🔍 Analyser le client",
