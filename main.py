@@ -9,6 +9,13 @@ import mlflow
 
 import joblib
 
+import os
+from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
 
 feature_names = ['CreditScore', 'Geography', 'Gender', 'Age', 
                  'Tenure', 'Balance', 'NumOfProducts', 
@@ -154,4 +161,80 @@ def explain(data: ClientData):
             }
             for feat, val in top3.items()
         }
+    }
+
+
+@app.post("/analyze")
+def analyze(data: ClientData):
+
+    # Prédiction
+    X = pd.DataFrame([{
+        'CreditScore': data.CreditScore,
+        'Geography': data.Geography,
+        'Gender': data.Gender,
+        'Age': data.Age,
+        'Tenure': data.Tenure,
+        'Balance': data.Balance,
+        'NumOfProducts': data.NumOfProducts,
+        'HasCrCard': data.HasCrCard,
+        'IsActiveMember': data.IsActiveMember,
+        'EstimatedSalary': data.EstimatedSalary
+    }])
+
+    prediction = model.predict(X)[0]
+    probabilite = model.predict_proba(X)[0].max()
+    pourcentage = round(float(probabilite) * 100, 1)
+
+    # SHAP
+    shap_vals = explainer.shap_values(X)
+    shap_dict = {
+        feat: round(float(val), 4)
+        for feat, val in zip(feature_names, shap_vals[0])
+    }
+    top3 = dict(sorted(
+        shap_dict.items(),
+        key=lambda x: abs(x[1]),
+        reverse=True
+    )[:3])
+
+    # Prompt pour Groq
+    statut = "va quitter la banque" if prediction == 1 else "va rester"
+    top3_texte = "\n".join([
+        f"- {feat} : {val:+.2f}" 
+        for feat, val in top3.items()
+    ])
+
+    prompt = f"""Tu es un expert en risque bancaire. 
+Analyse ce profil client de manière concise et professionnelle.
+
+Client : {data.Age} ans, {data.Gender}, {data.Geography}
+Solde : {data.Balance}€ | Produits : {data.NumOfProducts}
+Actif : {'Oui' if data.IsActiveMember else 'Non'}
+
+Prédiction : {pourcentage}% de risque de churn : ce client {statut}.
+
+Facteurs principaux (valeurs SHAP) :
+{top3_texte}
+
+Génère en 3-4 phrases :
+1. Une analyse du profil
+2. Les raisons principales du risque
+3. Une recommandation concrète pour le conseiller bancaire
+
+Réponds en français, de manière professionnelle et actionnable."""
+
+    # Appel Groq
+    response = groq_client.chat.completions.create(
+        model="groq/compound-mini",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=300,
+        temperature=0.7
+    )
+
+    analyse = response.choices[0].message.content
+
+    return {
+        "prediction": int(prediction),
+        "probabilite": pourcentage,
+        "analyse_llm": analyse
     }

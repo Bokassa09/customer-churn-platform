@@ -161,4 +161,4 @@ venv.bak/
 # mlflow local runs
 mlruns/*
 
-catboost_info/
+catboost_info/.env

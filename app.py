@@ -3,6 +3,7 @@ from dash import html, dcc, callback, Input, Output, State
 import requests
 
 API_URL = "https://customer-churn-platform-f0g1.onrender.com"
+#API_URL = "http://127.0.0.1:8000"
 
 app = dash.Dash(__name__)
 
@@ -236,6 +237,9 @@ def analyser_client(n_clicks, credit_score, geography, gender,
         res_explain = requests.post(f"{API_URL}/explain", json=client)
         result = res_predict.json()
         shap_result = res_explain.json()
+        # Appel /analyze
+        res_analyze = requests.post(f"{API_URL}/analyze", json=client)
+        analyse_llm = res_analyze.json()["analyse_llm"]
 
         est_churn = result["prediction"] == 1
         couleur_bg = "#fdecea" if est_churn else "#eafaf1"
@@ -327,9 +331,26 @@ html.Div([
         },
         config={"displayModeBar": False}
     )
+], style=STYLE_CARD),
+
+# Analyse LLM
+html.Div([
+    html.H3("🤖 Analyse IA : Recommandation conseiller",
+            style={"color": COLORS["primary"], "marginTop": "0"}),
+    html.P("Généré par Groq Compound Mini",
+           style={"color": "#999", "fontSize": "11px",
+                  "marginBottom": "10px"}),
+    html.P(analyse_llm,
+           style={"color": COLORS["text"],
+                  "fontSize": "14px",
+                  "lineHeight": "1.8",
+                  "fontStyle": "italic",
+                  "borderLeft": f"3px solid {COLORS['secondary']}",
+                  "paddingLeft": "15px"})
 ], style=STYLE_CARD)
 
         ])
+
 
     
 
