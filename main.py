@@ -165,7 +165,7 @@ def explain(data: ClientData):
         }
     }
 
-
+@app.post("/analyze")
 def analyze(data: ClientData):
     if groq_client is None:
         return {"analyse_llm": "Service LLM non disponible"}
