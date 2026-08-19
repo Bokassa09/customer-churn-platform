@@ -1,101 +1,129 @@
-# customer-churn-platform
+# 🏦 Customer Churn Intelligence Platform
 
-[![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
+> Pipeline MLOps complet de détection et d'explication du churn bancaire
 
-## Overview
+[![CI/CD](https://github.com/Bokassa09/customer-churn-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Bokassa09/customer-churn-platform/actions)
 
-This is your new Kedro project, which was generated using `kedro 1.5.0`.
+---
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
+## Problématique métier
 
-## Rules and guidelines
+Une banque constate que des clients ferment leur compte chaque mois.
+Acquérir un nouveau client coûte **5 à 7 fois plus cher** que d'en retenir un.
+Ce projet identifie à l'avance les clients à risque de départ (churn)
+et explique les raisons pour cibler les actions de rétention.
 
-In order to get the best out of the template:
+---
 
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a data engineering convention
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
+## Demo en ligne
 
-## How to install dependencies
+| Service | Lien |
+|---------|------|
+| 🖥️ Dashboard | [customer-churn-platform-1-zeg0.onrender.com](https://customer-churn-platform-1-zeg0.onrender.com) |
+| ⚡ API FastAPI | [customer-churn-platform-f0g1.onrender.com/docs](https://customer-churn-platform-f0g1.onrender.com/docs) |
 
-Declare any dependencies in `requirements.txt` for `pip` installation.
+> ⚠️ Le free tier Render peut mettre 50 secondes à démarrer après inactivité.
 
-To install them, run:
+---
 
-```
-pip install -r requirements.txt
-```
+## Résultats du modèle
 
-## How to run your Kedro pipeline
+| Métrique | Score |
+|----------|-------|
+| ROC-AUC | **87.5%** |
+| Recall | **69.0%** |
+| Precision | **54.7%** |
+| F1 Score | **61.0%** |
 
-You can run your Kedro project with:
+Modèle sélectionné selon le **Recall** : métrique prioritaire pour ne pas rater de vrais churners.
 
-```
-kedro run
-```
+---
 
-## How to test your Kedro project
-
-Have a look at the file `tests/test_run.py` for instructions on how to write your tests. You can run your tests as follows:
-
-```
-pytest
-```
-
-You can configure the coverage threshold in your project's `pyproject.toml` file under the `[tool.coverage.report]` section.
-
-
-## Project dependencies
-
-To see and update the dependency requirements for your project use `requirements.txt`. You can install the project requirements with `pip install -r requirements.txt`.
-
-[Further information about project dependencies](https://docs.kedro.org/en/stable/kedro_project_setup/dependencies.html#project-specific-dependencies)
-
-## How to work with Kedro and notebooks
-
-> Note: Using `kedro jupyter` or `kedro ipython` to run your notebook provides these variables in scope: `context`, 'session', `catalog`, and `pipelines`.
->
-> Jupyter, JupyterLab, and IPython are already included in the project requirements by default, so once you have run `pip install -r requirements.txt` you will not need to take any extra steps before you use them.
-
-### Jupyter
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
+## Stack technique
 
 ```
-pip install jupyter
+ML          → CatBoost + Optuna (optimisation automatique)
+Explicabilité → SHAP (Top 3 facteurs par client)
+LLM         → Groq Compound Mini (recommandations conseiller)
+MLOps       → MLflow (Tracking + Model Registry)
+Pipeline    → Kedro (structure modulaire reproductible)
+API         → FastAPI
+Dashboard   → Dash (Plotly)
+CI/CD       → GitHub Actions (pytest)
+Déploiement → Docker + Render
 ```
 
-After installing Jupyter, you can start a local notebook server:
+---
+
+## Architecture
 
 ```
-kedro jupyter notebook
+Données CSV
+    ↓ Kedro Pipeline
+Preprocessing → CatBoost + Optuna → SHAP → MLflow Registry
+    ↓
+FastAPI (/predict + /explain + /analyze)
+    ↓ Groq LLM
+Dashboard Dash
+    ↓
+Déployé sur Render (2 services Docker)
 ```
 
-### JupyterLab
-To use JupyterLab, you need to install it:
+---
+
+## 📁 Structure du projet
 
 ```
-pip install jupyterlab
+customer-churn-platform/
+├── main.py                    # API FastAPI
+├── app.py                     # Dashboard Dash
+├── model.pkl                  # Modèle CatBoost
+├── Dockerfile                 # Image API
+├── Dockerfile.dash            # Image Dashboard
+├── requirements-api.txt       # Dépendances API
+├── requirements-dash.txt      # Dépendances Dashboard
+├── .github/workflows/ci.yml   # Pipeline CI/CD
+├── notebooks/
+│   ├── 01_eda.ipynb           # Exploration des données
+│   ├── 02_modeling.ipynb      # CatBoost + Optuna
+│   ├── 03_shap.ipynb          # Explicabilité SHAP
+│   ├── 04_mlflow.ipynb        # Tracking MLflow
+│   └── 05_registry.py         # Model Registry
+├── src/pipelines/
+│   ├── data_processing/       # Pipeline Kedro
+│   ├── training/
+│   └── explainability/
+└── tests/
+    └── test_api.py            # Tests automatiques
 ```
 
-You can also start JupyterLab:
+---
 
+## Lancer en local
+
+```bash
+# Cloner le repo
+git clone https://github.com/Bokassa09/customer-churn-platform.git
+cd customer-churn-platform
+
+# Créer l'environnement
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements-api.txt
+
+# Variables d'environnement
+echo "GROQ_API_KEY=ta-clé-groq" > .env
+
+# Lancer l'API
+uvicorn main:app --reload
+
+# Lancer le dashboard (autre terminal)
+pip install dash requests
+python app.py
 ```
-kedro jupyter lab
-```
 
-### IPython
-And if you want to run an IPython session:
+---
 
-```
-kedro ipython
-```
+## 👤 Auteur
 
-### How to ignore notebook output cells in `git`
-To automatically strip out all output cell contents before committing to `git`, you can use tools like [`nbstripout`](https://github.com/kynan/nbstripout). For example, you can add a hook in `.git/config` with `nbstripout --install`. This will run `nbstripout` before anything is committed to `git`.
-
-> *Note:* Your output cells will be retained locally.
-
-## Package your Kedro project
-
-[Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/deploy/package_a_project/#package-an-entire-kedro-project)
+**Omer Bokassa Boueke** : ML Engineer & MLOps
