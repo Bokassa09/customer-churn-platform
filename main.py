@@ -141,17 +141,17 @@ def explain(data: ClientData):
 
     # Messages métier
     messages = {
-        'Age':            "Âge élevé : client proche de la retraite",
-        'IsActiveMember': "Client inactif : risque de décrochage",
-        'Balance':        "Solde élevé : courtisé par la concurrence",
-        'Geography':      "Région à fort taux de churn",
-        'NumOfProducts':  "Nombre de produits atypique",
-        'Gender':         "Profil démographique à risque",
-        'CreditScore':    "Score de crédit influent",
-        'Tenure':         "Ancienneté faible",
-        'HasCrCard':      "Possession de carte de crédit",
-        'EstimatedSalary':"Salaire influent"
-    }
+    'Age': f"{'Âge élevé : client proche de la retraite' if data.Age > 40 else 'Jeune client : fidélité plus probable'}",
+    'IsActiveMember': f"{'Client inactif : risque de décrochage' if data.IsActiveMember == 0 else 'Client actif : engagement positif'}",
+    'Balance': f"{'Solde élevé : courtisé par la concurrence' if data.Balance > 50000 else 'Solde faible : moins courtisé'}",
+    'NumOfProducts': f"{'Nombre de produits atypique' if data.NumOfProducts >= 3 else 'Peu de produits : faible engagement'}",
+    'Geography': f"{'Région à fort taux de churn' if data.Geography == 'Germany' else 'Région à taux de churn modéré'}",
+    'Gender': "Profil démographique influent",
+    'CreditScore': "Score de crédit influent",
+    'Tenure': f"{'Ancienneté faible : client récent' if data.Tenure < 3 else 'Client fidèle depuis plusieurs années'}",
+    'HasCrCard': f"{'Détient une carte de crédit' if data.HasCrCard == 1 else 'Pas de carte de crédit'}",
+    'EstimatedSalary': "Salaire influent"
+}
 
     return {
         "base_value": round(float(explainer.expected_value), 4),
