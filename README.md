@@ -44,7 +44,7 @@ Modèle sélectionné selon le **Recall** : métrique prioritaire pour ne pas ra
 ```
 ML          → CatBoost + Optuna (optimisation automatique)
 Explicabilité → SHAP (Top 3 facteurs par client)
-LLM         → Groq Compound Mini (recommandations conseiller)
+LLM         → Groq gpt-oss-120b (recommandations conseiller)
 MLOps       → MLflow (Tracking + Model Registry)
 Pipeline    → Kedro (structure modulaire reproductible)
 API         → FastAPI
