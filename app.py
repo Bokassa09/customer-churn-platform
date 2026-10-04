@@ -408,7 +408,7 @@ html.Div([
 html.Div([
     html.H3("🤖 Analyse IA : Recommandation conseiller",
             style={"color": COLORS["primary"], "marginTop": "0"}),
-    html.P("Généré par Groq Compound Mini",
+    html.P("Généré par Groq (gpt-oss-120b)",
            style={"color": "#999", "fontSize": "11px",
                   "marginBottom": "10px"}),
     html.P(analyse_llm,
