@@ -228,7 +228,7 @@ Réponds en français, de manière professionnelle et actionnable."""
 
     # Appel Groq
     response = groq_client.chat.completions.create(
-        model="groq/compound-mini",
+        model="openai/gpt-oss-120b",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=300,
         temperature=0.7
